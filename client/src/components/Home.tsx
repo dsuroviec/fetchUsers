@@ -1,14 +1,17 @@
-import { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import TokenContext from "../contexts/TokenContext";
-export const Home = () => {
+
+type HomeProps = {
+    token: string | null;
+};
+
+export const Home = ({ token }: HomeProps) => {
     const [users, setUsers] = useState<User[] | null>(null);
-    const { token } = useContext(TokenContext)!;
+
     interface User {
         id: number;
         firstname: string;
         lastname: string;
-        username: string;
     }
 
     const getusers = async () => {
@@ -17,7 +20,6 @@ export const Home = () => {
         );
         setUsers(users);
     };
-
     return (
         <>
             {!token && <Redirect to="/login" />}
@@ -29,7 +31,7 @@ export const Home = () => {
                     users.map((user) => (
                         <div
                             key={user.id}
-                        >{`${user.firstname} ${user.lastname} ${user.username}`}</div>
+                        >{`${user.firstname} ${user.lastname}`}</div>
                     ))}
             </div>
         </>

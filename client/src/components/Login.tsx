@@ -1,17 +1,16 @@
-import { useContext, useState } from "react";
+import React from "react";
 import { Redirect } from "react-router-dom";
-import TokenContext from "../contexts/TokenContext";
-export const Login = () => {
-    const [username, setUsername] = useState<string | null>();
-    const [password, setPassword] = useState<string | number>();
 
-    const { token, setToken } = useContext(TokenContext)!;
-    interface User {
-        id: number;
-        firstname: string;
-        lastname: string;
-        username: string;
-    }
+type LoginProps = {
+    token: string | null;
+    setToken: Function;
+};
+
+export const Login = ({ token, setToken }: LoginProps) => {
+    const handleLogin = () => {
+        // If authentication passes, set token, which redirects the component
+        setToken("some token");
+    };
 
     return (
         <>
@@ -27,37 +26,13 @@ export const Login = () => {
                 <form onSubmit={(event) => event.preventDefault()}>
                     <label>
                         <p>Username</p>
-                        <input
-                            type="text"
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
+                        <input type="text" />
                     </label>
                     <label>
                         <p>Password</p>
-                        <input
-                            type="password"
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <input type="password" />
                     </label>
-                    <button
-                        type="submit"
-                        onClick={async () => {
-                            const token: string = await fetch("/api/token", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({ username }),
-                            }).then((response) => response.json());
-
-                            // If user exists, set context
-                            console.log(token);
-                            if (username && token.length) {
-                                setToken(token);
-                                localStorage.setItem("username", username);
-                            }
-                        }}
-                    >
+                    <button type="submit" onClick={() => handleLogin()}>
                         Set Token To Truthy
                     </button>
                 </form>

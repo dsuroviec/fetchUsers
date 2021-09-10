@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import React from "react";
 import { Redirect } from "react-router-dom";
-import TokenContext from "../contexts/TokenContext";
 
-export const ContactUs = () => {
-    const { token } = useContext(TokenContext)!;
+type ContactUsProps = {
+    token: string | null;
+};
 
+export const ContactUs = ({ token }: ContactUsProps) => {
     return (
         <>
             {!token && <Redirect to="login" />}

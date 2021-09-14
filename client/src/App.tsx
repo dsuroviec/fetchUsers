@@ -9,6 +9,7 @@ import {
 import { Home } from "./components/Home";
 import { Login } from "./components/Login";
 import { ContactUs } from "./components/ContactUs";
+import { SignUp } from "./components/Signup";
 import "./App.css";
 import TokenContext from "./contexts/TokenContext";
 
@@ -22,9 +23,11 @@ function App() {
             <Router>
                 <div>
                     <nav>
-                        <ul>
+                        <ul style={{ listStyle: "none" }}>
                             <li>
-                                <Link to="/">Home</Link>
+                                <Link to="/" className="text-4xl">
+                                    Home
+                                </Link>
                             </li>
                             <li>
                                 <Link to="/contactUs">Contact Us</Link>
@@ -33,15 +36,18 @@ function App() {
                                 <Link to="/login">Login</Link>
                             </li>
                             <li>
-                                <Link
-                                    to="#0"
+                                <Link to="/signup">Sign Up</Link>
+                            </li>
+                            <li>
+                                <button
+                                    className="btn"
                                     onClick={() => {
                                         setToken(null);
                                         localStorage.removeItem("username");
                                     }}
                                 >
                                     Logout
-                                </Link>
+                                </button>
                             </li>
                         </ul>
                     </nav>
@@ -53,8 +59,12 @@ function App() {
                     <Route path="/contactUs">
                         <ContactUs />
                     </Route>
+
                     <Route path="/login">
                         <Login />
+                    </Route>
+                    <Route path="/signUp">
+                        <SignUp />
                     </Route>
                     <Route>
                         <Redirect to="/" />

@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import TokenContext from "../contexts/TokenContext";
+import { Button } from "./Button";
+import { Input } from "./Input";
 export const Login = () => {
     const [username, setUsername] = useState<string | null>();
     const [password, setPassword] = useState<string | number>();
@@ -27,19 +29,20 @@ export const Login = () => {
                 <form onSubmit={(event) => event.preventDefault()}>
                     <label>
                         <p>Username</p>
-                        <input
+                        <Input
+                            placeholder="First Name"
                             type="text"
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </label>
                     <label>
                         <p>Password</p>
-                        <input
+                        <Input
                             type="password"
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </label>
-                    <button
+                    <Button
                         type="submit"
                         onClick={async () => {
                             const token: string = await fetch("/api/token", {
@@ -58,8 +61,11 @@ export const Login = () => {
                             }
                         }}
                     >
-                        Set Token To Truthy
-                    </button>
+                        Log In
+                    </Button>
+                    <Link className="btn" to="/signUp">
+                        SignUp
+                    </Link>
                 </form>
             </div>
         </>

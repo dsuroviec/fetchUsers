@@ -15,7 +15,7 @@ import TokenContext from "./contexts/TokenContext";
 
 function App() {
     const [token, setToken] = useState<null | string>(
-        localStorage.username || null
+        localStorage.token || null
     );
 
     return (
@@ -23,11 +23,9 @@ function App() {
             <Router>
                 <div>
                     <nav>
-                        <ul style={{ listStyle: "none" }}>
+                        <ul>
                             <li>
-                                <Link to="/" className="text-4xl">
-                                    Home
-                                </Link>
+                                <Link to="/">Home</Link>
                             </li>
                             <li>
                                 <Link to="/contactUs">Contact Us</Link>
@@ -36,18 +34,18 @@ function App() {
                                 <Link to="/login">Login</Link>
                             </li>
                             <li>
-                                <Link to="/signup">Sign Up</Link>
+                                <Link to="/signUp">Sign Up</Link>
                             </li>
                             <li>
-                                <button
-                                    className="btn"
+                                <Link
+                                    to="/login"
                                     onClick={() => {
                                         setToken(null);
-                                        localStorage.removeItem("username");
+                                        localStorage.removeItem("token");
                                     }}
                                 >
                                     Logout
-                                </button>
+                                </Link>
                             </li>
                         </ul>
                     </nav>
@@ -59,7 +57,6 @@ function App() {
                     <Route path="/contactUs">
                         <ContactUs />
                     </Route>
-
                     <Route path="/login">
                         <Login />
                     </Route>

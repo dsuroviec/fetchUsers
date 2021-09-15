@@ -1,4 +1,7 @@
 import express from "express";
+import jwt from "jsonwebtoken";
+import { JsonWebTokenError } from "jsonwebtoken";
+import { runInNewContext } from "vm";
 import { getUsers, authenticateUser, createUser } from "./databasepg";
 const app = express();
 app.use(express.json());
@@ -10,8 +13,13 @@ app.get("/api/users", (req, res, next) => {
 });
 
 app.post("/api/token", (req, res, next) => {
-    authenticateUser(req.body.username)
-        .then((user) => res.send(user))
+    authenticateUser(req.body)
+        .then((token) => {
+            if (!token) {
+                return res.status(403).send("Invalid Credentials");
+            }
+            res.send(token);
+        })
         .catch((error) => next(error));
 });
 

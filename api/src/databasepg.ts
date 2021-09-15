@@ -1,5 +1,8 @@
 import { Pool } from "pg";
-
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 const pool = new Pool({
     host: "localhost",
     user: "postgres",
@@ -13,15 +16,44 @@ export const getUsers = async () => {
     return res.rows;
 };
 
-export const authenticateUser = async (username: string) => {
-    const res = await pool.query({
-        name: "authenticate-user",
-        text: "SELECT username FROM users WHERE username=$1",
+interface AuthenticateUserProps {
+    username: string;
+    password: string;
+}
+export const authenticateUser = async ({
+    username,
+    password,
+}: AuthenticateUserProps) => {
+    const usernameResponse = await pool.query({
+        name: "authenticate-username",
+        text: "SELECT username FROM users WHERE username=$1 ",
         values: [username],
     });
-
-    console.log(res.rows);
-    return res.rows;
+    // If the username exists check the password
+    if (usernameResponse.rows.length) {
+        const passwordResponse = await pool.query({
+            name: "authenticate-password",
+            text: "SELECT password FROM users WHERE username=$1 ",
+            values: [username],
+        });
+        // Check if passwords match
+        const match = await bcrypt.compare(
+            password,
+            passwordResponse.rows[0].password
+        );
+        // if there is a match, return JWT token
+        // then front end does what it wants with the token
+        if (match) {
+            const accessTokenSecret = jwt.sign(
+                usernameResponse.rows[0],
+                process.env.ACCESS_TOKEN_SECRET!
+            );
+            // RETURNING A STRING
+            // return JSON.stringify(accessTokenSecret);
+            // BUT WANT TO RETURN OBJECT
+            return accessTokenSecret;
+        }
+    }
 };
 
 interface CreateUserProps {
@@ -37,11 +69,13 @@ export const createUser = async ({
     username,
     password,
 }: CreateUserProps) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const response = await pool.query({
         name: "create-user",
         text: "INSERT INTO users (firstName, lastName, username, password) VALUES($1, $2, $3, $4) RETURNING *",
-        values: [firstName, lastName, username, password],
+        values: [firstName, lastName, username, hashedPassword],
     });
 
-    return response.rows;
+    return response.rows[0];
 };

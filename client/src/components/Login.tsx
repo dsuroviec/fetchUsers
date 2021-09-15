@@ -50,14 +50,13 @@ export const Login = () => {
                                 headers: {
                                     "Content-Type": "application/json",
                                 },
-                                body: JSON.stringify({ username }),
-                            }).then((response) => response.json());
+                                body: JSON.stringify({ username, password }),
+                            }).then((response) => response.text());
 
                             // If user exists, set context
-                            console.log(token);
-                            if (username && token.length) {
+                            if (token) {
                                 setToken(token);
-                                localStorage.setItem("username", username);
+                                localStorage.setItem("token", token);
                             }
                         }}
                     >

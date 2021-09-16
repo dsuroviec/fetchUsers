@@ -48,9 +48,6 @@ export const authenticateUser = async ({
                 usernameResponse.rows[0],
                 process.env.ACCESS_TOKEN_SECRET!
             );
-            // RETURNING A STRING
-            // return JSON.stringify(accessTokenSecret);
-            // BUT WANT TO RETURN OBJECT
             return accessTokenSecret;
         }
     }
@@ -76,6 +73,12 @@ export const createUser = async ({
         text: "INSERT INTO users (firstName, lastName, username, password) VALUES($1, $2, $3, $4) RETURNING *",
         values: [firstName, lastName, username, hashedPassword],
     });
+
+    const accessTokenSecret = jwt.sign(
+        response.rows[0].username,
+        process.env.ACCESS_TOKEN_SECRET!
+    );
+    response.rows[0].token = accessTokenSecret;
 
     return response.rows[0];
 };

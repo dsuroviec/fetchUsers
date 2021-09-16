@@ -4,9 +4,11 @@ import TokenContext from "../contexts/TokenContext";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { FormErrorMessage } from "./FormErrorMessage";
+import UserContext from "../contexts/UserContext";
 
 export const SignUp = () => {
     const { token, setToken } = useContext(TokenContext)!;
+    const { user, setUser } = useContext(UserContext)!;
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
@@ -114,7 +116,7 @@ export const SignUp = () => {
                         children="Sign Up"
                         style={{}}
                         onClick={async () => {
-                            const token: string = await fetch("/api/signup", {
+                            const user = await fetch("/api/signup", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -126,12 +128,13 @@ export const SignUp = () => {
                                     password,
                                 }),
                             }).then((response) => response.json());
-
+                            console.log(user.token, " here is my token");
                             // If user exists, set context
-                            console.log(token);
-                            if (username && token.length) {
-                                setToken(token);
-                                localStorage.setItem("username", username);
+
+                            if (user.token) {
+                                setToken(user.token);
+                                setUser({ firstName, lastName, username });
+                                localStorage.setItem("token", user.token);
                             }
                         }}
                     />

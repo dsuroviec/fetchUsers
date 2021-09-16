@@ -31,7 +31,10 @@ export const Home = () => {
                 }}
             >
                 <h1 className="text-3xl">{`Welcome ${user.firstName}`}</h1>
-
+                <h1 className="text-xl">{`have a chilln' ${new Date().toLocaleDateString(
+                    undefined,
+                    { weekday: "long" }
+                )}`}</h1>
                 <Button className="m-auto" onClick={() => getusers()}>
                     Get Users
                 </Button>

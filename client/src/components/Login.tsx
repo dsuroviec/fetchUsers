@@ -45,19 +45,19 @@ export const Login = () => {
                     <Button
                         type="submit"
                         onClick={async () => {
-                            const token: string = await fetch("/api/token", {
+                            const token = await fetch("/api/token", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
                                 },
                                 body: JSON.stringify({ username, password }),
-                            }).then((response) => response.text());
+                            }).then((response) => response.json);
 
                             // If user exists, set context
-                            if (token) {
-                                setToken(token);
-                                localStorage.setItem("token", token);
-                            }
+                            // if (token) {
+                            //     setToken(token);
+                            //     localStorage.setItem("token", token);
+                            // }
                         }}
                     >
                         Log In

@@ -3,15 +3,36 @@ import jwt from "jsonwebtoken";
 import { JsonWebTokenError } from "jsonwebtoken";
 import { runInNewContext } from "vm";
 import { getUsers, authenticateUser, createUser } from "./databasepg";
+
 import _ from "lodash";
 const app = express();
 
 app.use(express.json());
-// GET USERS FROM FETCH-USERS-DB POSTGRES
-app.get("/api/users", (req, res, next) => {
-    getUsers()
-        .then((users) => res.send(users))
-        .catch((error) => next(error));
+
+const userArray = [
+    { username: "darren", title: "man" },
+    { username: "ert", title: "ert" },
+];
+
+function authenticateToken(req: any, res: any, next: any) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token == null) return res.sendStatus(401);
+    jwt.verify(
+        token,
+        process.env.ACCESS_TOKEN_SECRET!,
+        (err: any, user: any) => {
+            if (err) return res.sendStatus(403);
+            req.user = user;
+            next();
+        }
+    );
+}
+
+app.get("/api/users", authenticateToken, (req: any, res, next) => {
+    res.json(
+        userArray.filter((user: any) => user.username === req.user.username)
+    );
 });
 
 app.post("/api/token", (req, res, next) => {

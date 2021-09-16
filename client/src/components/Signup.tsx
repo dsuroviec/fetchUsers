@@ -4,9 +4,11 @@ import TokenContext from "../contexts/TokenContext";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { FormErrorMessage } from "./FormErrorMessage";
+import UserContext from "../contexts/UserContext";
 
 export const SignUp = () => {
     const { token, setToken } = useContext(TokenContext)!;
+    const { user, setUser } = useContext(UserContext)!;
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
@@ -131,6 +133,7 @@ export const SignUp = () => {
 
                             if (user.token) {
                                 setToken(user.token);
+                                setUser({ firstName, lastName, username });
                                 localStorage.setItem("token", user.token);
                             }
                         }}

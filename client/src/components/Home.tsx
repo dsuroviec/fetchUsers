@@ -1,9 +1,12 @@
 import { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import TokenContext from "../contexts/TokenContext";
+import UserContext from "../contexts/UserContext";
+import { Button } from "./Button";
 export const Home = () => {
     const [users, setUsers] = useState<User[] | null>(null);
     const { token } = useContext(TokenContext)!;
+    const { user } = useContext(UserContext)!;
     interface User {
         id: number;
         firstname: string;
@@ -21,10 +24,17 @@ export const Home = () => {
     return (
         <>
             {!token && <Redirect to="/login" />}
-            <div style={{ textAlign: "center", marginTop: "200px" }}>
-                <h1>HOMEPAGE</h1>
+            <div
+                style={{
+                    textAlign: "center",
+                    marginTop: "50px",
+                }}
+            >
+                <h1 className="text-3xl">{`Welcome ${user.firstName}`}</h1>
 
-                <button onClick={() => getusers()}>Get Users</button>
+                <Button className="m-auto" onClick={() => getusers()}>
+                    Get Users
+                </Button>
                 {users &&
                     users.map((user) => (
                         <div

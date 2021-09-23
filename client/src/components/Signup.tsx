@@ -114,9 +114,8 @@ export const SignUp = () => {
                         // }
                         className="btn"
                         children="Sign Up"
-                        style={{}}
                         onClick={async () => {
-                            const user = await fetch("/api/signup", {
+                            const token = await fetch("/api/signup", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -127,14 +126,11 @@ export const SignUp = () => {
                                     username,
                                     password,
                                 }),
-                            }).then((response) => response.json());
-                            console.log(user.token, " here is my token");
-                            // If user exists, set context
-
-                            if (user.token) {
-                                setToken(user.token);
-                                setUser({ firstName, lastName, username });
-                                localStorage.setItem("token", user.token);
+                            }).then((response) => response.text());
+                            // If user exists, set context for user and token
+                            if (token) {
+                                setToken(token);
+                                localStorage.setItem("token", token);
                             }
                         }}
                     />

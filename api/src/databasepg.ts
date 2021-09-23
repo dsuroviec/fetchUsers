@@ -24,30 +24,33 @@ export const authenticateUser = async ({
     username,
     password,
 }: AuthenticateUserProps) => {
-    const usernameResponse = await pool.query({
+    const user = await pool.query({
         name: "authenticate-username",
-        text: "SELECT username FROM users WHERE username=$1 ",
+        text: "SELECT username, firstname, lastname FROM users WHERE username=$1 ",
         values: [username],
     });
     // If the username exists check the password
-    if (usernameResponse.rows.length) {
-        const passwordResponse = await pool.query({
-            name: "authenticate-password",
-            text: "SELECT password FROM users WHERE username=$1 ",
-            values: [username],
-        });
+    if (user.rows.length) {
+        const storedPassword: any = await pool
+            .query({
+                name: "authenticate-password",
+                text: "SELECT password FROM users WHERE username=$1 ",
+                values: [username],
+            })
+            // THIS IS NOT WORKING FOR SOME REASON< POOL.END DIDN'T FIX
+            .then((response) => response.rows[0].password);
+
+        // pool.end();
         // Check if passwords match
-        const match = await bcrypt.compare(
-            password,
-            passwordResponse.rows[0].password
-        );
+        const match = await bcrypt.compare(password, storedPassword);
         // if there is a match, return JWT token
         // then front end does what it wants with the token
         if (match) {
             const accessTokenSecret = jwt.sign(
-                usernameResponse.rows[0],
+                user.rows[0],
                 process.env.ACCESS_TOKEN_SECRET!
             );
+
             return accessTokenSecret;
         }
     }
@@ -78,7 +81,6 @@ export const createUser = async ({
         response.rows[0].username,
         process.env.ACCESS_TOKEN_SECRET!
     );
-    response.rows[0].token = accessTokenSecret;
 
-    return response.rows[0];
+    return accessTokenSecret;
 };

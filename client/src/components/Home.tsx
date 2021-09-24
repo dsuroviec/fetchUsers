@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import TokenContext from "../contexts/TokenContext";
 import UserContext from "../contexts/UserContext";
 import { Button } from "./Button";
+
 export const Home = () => {
     const [users, setUsers] = useState<User[] | null>(null);
     const { token } = useContext(TokenContext)!;
@@ -30,7 +31,9 @@ export const Home = () => {
                     marginTop: "50px",
                 }}
             >
-                <h1 className="text-3xl">{`Welcome ${user.firstName}`}</h1>
+                {user?.firstName && (
+                    <h1 className="text-3xl">{`Welcome ${user.firstName}`}</h1>
+                )}
                 <h1 className="text-xl">{`have a chilln' ${new Date().toLocaleDateString(
                     undefined,
                     { weekday: "long" }

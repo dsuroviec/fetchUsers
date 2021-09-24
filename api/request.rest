@@ -1,10 +1,16 @@
 
 GET http://localhost:5000/api/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVydCIsImlhdCI6MTYzMTgxODYzMH0.BSChDI7NHdr52LBu7DAJE4R4n49EoC9zhAwDep-c_gE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVydCIsImlhdCI6MTYzMjQ0MTI0MCwiZXhwIjoxNjMyNDQ0ODQwfQ.WUKIGO_i0Cfjfd2oVmhm_5rLUF8pOI8HmGVjcVVZC8o
+
+###
+
+GET http://localhost:5000/api/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQ2LCJpYXQiOjE2MzI0Nzg3MjksImV4cCI6MTYzMjQ4MjMyOX0.Td86hfbHeLJp5Crjl3kRrolTdzKKRoWznr-m4EeDSNw
+
 
 
 ###
-POST http://localhost:5000/api/token
+POST http://localhost:5000/api/login
 Content-Type: application/json
 
 {

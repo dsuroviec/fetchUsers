@@ -1,7 +1,9 @@
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
+import { Request } from "express";
 dotenv.config();
 const pool = new Pool({
     host: "localhost",
@@ -11,11 +13,6 @@ const pool = new Pool({
     database: "postgres",
 });
 
-export const getUsers = async () => {
-    const res = await pool.query(`Select * from users`);
-    return res.rows;
-};
-
 interface AuthenticateUserProps {
     username: string;
     password: string;
@@ -24,35 +21,35 @@ export const authenticateUser = async ({
     username,
     password,
 }: AuthenticateUserProps) => {
-    const usernameResponse = await pool.query({
+    const user = await pool.query({
         name: "authenticate-username",
-        text: "SELECT username FROM users WHERE username=$1 ",
+        text: "SELECT id, username, firstname, lastname FROM users WHERE username=$1 ",
         values: [username],
     });
     // If the username exists check the password
-    if (usernameResponse.rows.length) {
-        const passwordResponse = await pool.query({
-            name: "authenticate-password",
-            text: "SELECT password FROM users WHERE username=$1 ",
-            values: [username],
-        });
+    if (user.rows.length) {
+        const storedPassword = await pool
+            .query({
+                name: "authenticate-password",
+                text: "SELECT password FROM users WHERE username=$1 ",
+                values: [username],
+            })
+            .then((response) => response.rows[0].password);
+
         // Check if passwords match
-        const match = await bcrypt.compare(
-            password,
-            passwordResponse.rows[0].password
-        );
+        const match = await bcrypt.compare(password, storedPassword);
         // if there is a match, return JWT token
-        // then front end does what it wants with the token
         if (match) {
             const accessTokenSecret = jwt.sign(
-                usernameResponse.rows[0],
-                process.env.ACCESS_TOKEN_SECRET!
+                { id: user.rows[0].id },
+                process.env.ACCESS_TOKEN_SECRET!,
+                { expiresIn: "1h" }
             );
+
             return accessTokenSecret;
         }
     }
 };
-
 interface CreateUserProps {
     firstName: string;
     lastName: string;
@@ -75,10 +72,43 @@ export const createUser = async ({
     });
 
     const accessTokenSecret = jwt.sign(
-        response.rows[0].username,
-        process.env.ACCESS_TOKEN_SECRET!
+        { id: response.rows[0].id },
+        process.env.ACCESS_TOKEN_SECRET!,
+        { expiresIn: "1h" }
     );
-    response.rows[0].token = accessTokenSecret;
 
-    return response.rows[0];
+    return accessTokenSecret;
+};
+
+export const authorizeRequest = async (req: Request, res: any) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    try {
+        if (!token) {
+            throw new Error();
+        }
+        const { id }: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!);
+        console.log(id, "Here is my id from the token");
+        return id;
+    } catch (error) {
+        console.log("authorizeRequestFunctionFailed", error);
+    }
+};
+
+export const getCurrentUser = async (
+    id: string | jwt.JwtPayload | undefined
+) => {
+    const user = await pool.query({
+        name: "get-current-user",
+        text: "SELECT username, firstname, lastname FROM users WHERE id=$1 ",
+        values: [id],
+    });
+
+    return user.rows[0];
+};
+
+export const getUsers = async () => {
+    const res = await pool.query(`Select * from users`);
+    return res.rows;
 };

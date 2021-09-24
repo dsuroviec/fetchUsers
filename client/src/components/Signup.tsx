@@ -4,47 +4,63 @@ import TokenContext from "../contexts/TokenContext";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { FormErrorMessage } from "./FormErrorMessage";
-import UserContext from "../contexts/UserContext";
-
+import { useFormik } from "formik";
 export const SignUp = () => {
     const { token, setToken } = useContext(TokenContext)!;
-    const { user, setUser } = useContext(UserContext)!;
-    const [firstName, setFirstName] = useState<string>("");
-    const [lastName, setLastName] = useState<string>("");
-    const [username, setUsername] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [formErrors, setFormErrors] = useState<FormErrors>({
-        firstNameError: "",
-        lastNameError: "",
-        usernameError: "",
-        passwordError: "",
-    });
+    // const [firstName, setFirstName] = useState<string>("");
+    // const [lastName, setLastName] = useState<string>("");
+    // const [username, setUsername] = useState<string>("");
+    // const [password, setPassword] = useState<string>("");
 
-    interface FormErrors {
-        firstNameError?: string;
-        lastNameError?: string;
-        usernameError?: string;
-        passwordError?: string;
+    interface Fields {
+        firstName?: string;
+        lastName?: string;
+        username?: string;
+        password?: string;
     }
 
-    // Form error validaton
-    useMemo(() => {
-        const errors: FormErrors = {};
-
-        if (!firstName) {
-            errors.firstNameError = "Required";
-        }
-        if (!lastName) {
-            errors.lastNameError = "Required";
-        }
-        if (!username) {
-            errors.usernameError = "Required";
-        }
-        if (!password) {
-            errors.passwordError = "Required";
-        }
-        setFormErrors(errors);
-    }, [firstName, lastName, username, password]);
+    const formik = useFormik({
+        initialValues: {
+            firstName: "",
+            lastName: "",
+            username: "",
+            password: "",
+        },
+        validate: ({ firstName, lastName, username, password }) => {
+            const errors: Fields = {};
+            if (!firstName) {
+                errors.firstName = "required";
+            }
+            if (!lastName) {
+                errors.lastName = "required";
+            }
+            if (!username) {
+                errors.username = "required";
+            }
+            if (!password) {
+                errors.password = "required";
+            }
+            return errors;
+        },
+        onSubmit: async ({ firstName, lastName, username, password }) => {
+            const token = await fetch("/api/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    username,
+                    password,
+                }),
+            }).then((response) => response.text());
+            if (token) {
+                setToken(token);
+                localStorage.setItem("token", token);
+            }
+        },
+    });
 
     return (
         <>
@@ -57,87 +73,69 @@ export const SignUp = () => {
                 }}
             >
                 <h1>Register</h1>
-                <form onSubmit={(event) => event.preventDefault()}>
+                <form onSubmit={formik.handleSubmit}>
                     <label>
                         <p>First Name</p>
                         <Input
-                            value={firstName}
+                            id="firstName"
+                            name="firstName"
                             type="text"
-                            onChange={(event) =>
-                                setFirstName(event.target.value)
-                            }
+                            onChange={formik.handleChange}
+                            value={formik.values.firstName}
                         />
-                        <FormErrorMessage
-                            message={formErrors.firstNameError || ""}
-                        />
+                        {formik.errors.firstName ? (
+                            <div className="text-red-600 text-xs">
+                                {formik.errors.firstName}
+                            </div>
+                        ) : null}
                     </label>
                     <label>
                         <p>Last Name</p>
                         <Input
-                            value={lastName}
+                            id="lastName"
+                            name="lastName"
                             type="text"
-                            onChange={(e) => setLastName(e.target.value)}
+                            onChange={formik.handleChange}
+                            value={formik.values.lastName}
                         />
-                        <FormErrorMessage
-                            message={formErrors.lastNameError || ""}
-                        />
+                        {formik.errors.lastName ? (
+                            <div className="text-red-600 text-xs">
+                                {formik.errors.lastName}
+                            </div>
+                        ) : null}
                     </label>
                     <label>
                         <p>Username</p>
                         <Input
-                            value={username}
+                            id="username"
+                            name="username"
                             type="text"
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={formik.handleChange}
+                            value={formik.values.username}
                         />
-                        <FormErrorMessage
-                            message={formErrors.usernameError || ""}
-                        />
+                        {formik.errors.username ? (
+                            <div className="text-red-600 text-xs">
+                                {formik.errors.username}
+                            </div>
+                        ) : null}
                     </label>
                     <label>
                         <p>Password</p>
                         <Input
-                            value={password}
+                            id="password"
+                            name="password"
                             type="text"
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={formik.handleChange}
+                            value={formik.values.password}
                         />
-                        <FormErrorMessage
-                            message={formErrors.passwordError || ""}
-                        />
+                        {formik.errors.password ? (
+                            <div className="text-red-600 text-xs">
+                                {formik.errors.password}
+                            </div>
+                        ) : null}
                     </label>
 
-                    <Button
-                        // disabled={
-                        //     formErrors.firstNameError?length>0 ||
-                        //         formErrors.firstNameError?length>0 ||
-                        //         formErrors.usernameError?length>0 ||
-                        //         formErrors.passwordError?length>0:true
-                        // }
-                        className="btn"
-                        children="Sign Up"
-                        style={{}}
-                        onClick={async () => {
-                            const user = await fetch("/api/signup", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    firstName,
-                                    lastName,
-                                    username,
-                                    password,
-                                }),
-                            }).then((response) => response.json());
-                            console.log(user.token, " here is my token");
-                            // If user exists, set context
-
-                            if (user.token) {
-                                setToken(user.token);
-                                setUser({ firstName, lastName, username });
-                                localStorage.setItem("token", user.token);
-                            }
-                        }}
-                    />
+                    <Button className="btn" type="submit" children="Sign Up" />
                 </form>
             </div>
         </>

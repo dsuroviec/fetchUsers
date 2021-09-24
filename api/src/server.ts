@@ -1,20 +1,16 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import { JsonWebTokenError } from "jsonwebtoken";
-import { runInNewContext } from "vm";
-import { getUsers, authenticateUser, createUser } from "./databasepg";
 import _ from "lodash";
 const app = express();
-
 app.use(express.json());
-// GET USERS FROM FETCH-USERS-DB POSTGRES
-app.get("/api/users", (req, res, next) => {
-    getUsers()
-        .then((users) => res.send(users))
-        .catch((error) => next(error));
-});
+import {
+    getUsers,
+    authenticateUser,
+    createUser,
+    getCurrentUser,
+    authorizeRequest,
+} from "./databasepg";
 
-app.post("/api/token", (req, res, next) => {
+app.post("/api/login", (req, res, next) => {
     authenticateUser(req.body)
         .then((token) => {
             if (!token) {
@@ -27,8 +23,27 @@ app.post("/api/token", (req, res, next) => {
 
 app.post("/api/signup", (req, res, next) => {
     createUser(req.body)
-        .then((user) => {
-            res.send(_.omit(user, ["password"]));
+        .then((token) => {
+            if (!token) {
+                return res.status(403).send("Invalid Credentials");
+            }
+            res.send(token);
+        })
+        .catch((error) => next(error));
+});
+
+app.get("/api/me", (req, res, next) => {
+    authorizeRequest(req, res)
+        .then((id) => {
+            getCurrentUser(id).then((user) => res.send(user));
+        })
+        .catch((error) => next(error));
+});
+
+app.get("/api/users", (req, res, next) => {
+    authorizeRequest(req, res)
+        .then((response) => {
+            res.send(response);
         })
         .catch((error) => next(error));
 });

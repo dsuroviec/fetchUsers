@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Route,
     Link,
@@ -28,7 +28,27 @@ function App() {
         username: null,
     });
 
-    console.log(user, "usercontext");
+    useEffect(() => {
+        if (token) {
+            const user = async () => {
+                const user = await fetch("/api/me", {
+                    headers: {
+                        Authorization: `token ${token}`,
+                    },
+                }).then((response) => response.json());
+                if (user) {
+                    setUser({
+                        firstName: user.firstname,
+                        lastName: user.lastname,
+                        username: user.username,
+                    });
+                    // localStorage.setItem("token", token);
+                }
+            };
+            user();
+        }
+    }, [token]);
+    console.log(user, "here is the user");
 
     return (
         <TokenContext.Provider value={{ token, setToken }}>

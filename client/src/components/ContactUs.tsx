@@ -4,7 +4,7 @@ import TokenContext from "../contexts/TokenContext";
 
 export const ContactUs = () => {
     const { token } = useContext(TokenContext)!;
-
+    console.log(token);
     return (
         <>
             {!token && <Redirect to="login" />}

@@ -79,7 +79,6 @@ export const createUser = async ({
 
     return accessTokenSecret;
 };
-
 export const authorizeRequest = async (req: Request, res: any) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];

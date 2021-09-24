@@ -42,13 +42,11 @@ function App() {
                         lastName: user.lastname,
                         username: user.username,
                     });
-                    // localStorage.setItem("token", token);
                 }
             };
             user();
         }
     }, [token]);
-    console.log(user, "here is the user");
 
     return (
         <TokenContext.Provider value={{ token, setToken }}>

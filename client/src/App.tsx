@@ -13,10 +13,13 @@ import { SignUp } from "./components/Signup";
 import "./App.css";
 import TokenContext from "./contexts/TokenContext";
 import UserContext from "./contexts/UserContext";
+import { HiSun } from "react-icons/hi";
+import { HiMoon } from "react-icons/hi";
 function App() {
     const [token, setToken] = useState<null | string>(
         localStorage.token || null
     );
+    const [theme, setTheme] = useState(localStorage.theme || "light");
     interface User {
         firstName: string | null;
         lastName: string | null;
@@ -80,6 +83,31 @@ function App() {
                                 </li>
                             </ul>
                         </nav>
+                    </div>
+                    <div className="absolute top-8 right-8 ">
+                        <button
+                            onClick={() => {
+                                if (theme === "dark") {
+                                    localStorage.setItem("theme", "light");
+                                    setTheme("light");
+                                    document.documentElement.classList.remove(
+                                        "dark"
+                                    );
+                                } else {
+                                    localStorage.setItem("theme", "dark");
+                                    setTheme("dark");
+                                    document.documentElement.classList.add(
+                                        "dark"
+                                    );
+                                }
+                            }}
+                        >
+                            {theme === "dark" ? (
+                                <HiSun className="text-yellow-500" size="2em" />
+                            ) : (
+                                <HiMoon className="text-blue-900" size="2em" />
+                            )}
+                        </button>
                     </div>
                     <Switch>
                         <Route exact path="/">

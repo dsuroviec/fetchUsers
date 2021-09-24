@@ -17,9 +17,9 @@ export const SignUp = () => {
         username?: string;
         password?: string;
     }
-    console.log(
-        !/[0-9][a-z][A-Z][*.!@$%^&(){}[]:;<>,.?~_+-=|\]/.test("Darr3*n8n")
-    );
+    // console.log(
+    //     !/[0-9][a-z][A-Z][*.!@$%^&(){}[]:;<>,.?~_+-=|\]/.test("Darr3*n8n")
+    // );
     const formik = useFormik({
         initialValues: {
             firstName: "",
@@ -92,7 +92,7 @@ export const SignUp = () => {
                     alignItems: "center",
                 }}
             >
-                <h1>Register</h1>
+                <h1 className="text-2xl mb-4">Sign Up</h1>
                 <form className="w-72" onSubmit={formik.handleSubmit}>
                     <label>
                         <p>First Name</p>
@@ -155,7 +155,11 @@ export const SignUp = () => {
                         ) : null}
                     </label>
 
-                    <Button className="btn" type="submit" children="Sign Up" />
+                    <Button
+                        className="block my-4 m-auto"
+                        type="submit"
+                        children="Sign Up"
+                    />
                 </form>
             </div>
         </>

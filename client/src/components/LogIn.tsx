@@ -4,7 +4,7 @@ import TokenContext from "../contexts/TokenContext";
 import { useFormik } from "formik";
 import { Button } from "./Button";
 import { Input } from "./Input";
-export const Login = () => {
+export const LogIn = () => {
     // const [username, setUsername] = useState<string | null>();
     // const [password, setPassword] = useState<string | number>();
 
@@ -70,7 +70,7 @@ export const Login = () => {
                     alignItems: "center",
                 }}
             >
-                <h1 className="text-2xl mb-4">Please Log In</h1>
+                <h1 className="text-2xl mb-4">Log In</h1>
                 <form className="w-72" onSubmit={formik.handleSubmit}>
                     <label>
                         <p>Username</p>
@@ -105,7 +105,7 @@ export const Login = () => {
                     <div className="flex justify-evenly mt-4">
                         <Button type="submit">Log In</Button>
                         <Button>
-                            <Link to="/signUp">SignUp</Link>
+                            <Link to="/signUp">Sign Up</Link>
                         </Button>
                     </div>
                 </form>

@@ -7,14 +7,15 @@ import {
     Redirect,
 } from "react-router-dom";
 import { Home } from "./components/Home";
-import { Login } from "./components/Login";
+import { LogIn } from "./components/LogIn";
 import { ContactUs } from "./components/ContactUs";
-import { SignUp } from "./components/Signup";
+import { SignUp } from "./components/SignUp";
 import "./App.css";
 import TokenContext from "./contexts/TokenContext";
 import UserContext from "./contexts/UserContext";
 import { HiSun } from "react-icons/hi";
 import { HiMoon } from "react-icons/hi";
+import { HiOutlineStar } from "react-icons/hi";
 function App() {
     const [token, setToken] = useState<null | string>(
         localStorage.token || null
@@ -55,24 +56,48 @@ function App() {
         <TokenContext.Provider value={{ token, setToken }}>
             <UserContext.Provider value={{ user, setUser }}>
                 <Router>
-                    <div>
-                        <nav>
-                            <ul>
-                                <li>
-                                    <Link to="/">Home</Link>
-                                </li>
-                                <li>
-                                    <Link to="/contactUs">Contact Us</Link>
-                                </li>
-                                <li>
-                                    <Link to="/login">Login</Link>
-                                </li>
-                                <li>
-                                    <Link to="/signUp">Sign Up</Link>
-                                </li>
-                                <li>
+                    <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
+                        <div className="flex items-center flex-shrink-0  mr-6">
+                            <img
+                                className="fill-red-500 h-8 w-8 mr-1"
+                                alt="logo"
+                                src="logo.svg"
+                            ></img>
+                            <HiOutlineStar className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 mr-2" />
+                            <span className="font-semibold text-xl tracking-tight ">
+                                Darren's App
+                            </span>
+                        </div>
+                        <div className="block lg:hidden">
+                            <button className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
+                                <svg
+                                    className="fill-current h-3 w-3"
+                                    viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <title>Menu</title>
+                                    <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+                                </svg>
+                            </button>
+                        </div>
+                        {token && (
+                            <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+                                <div className="text-sm lg:flex-grow">
                                     <Link
-                                        to="/login"
+                                        className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 mr-4"
+                                        to="/"
+                                    >
+                                        Home
+                                    </Link>
+                                    <Link
+                                        className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-blue-700  mr-4"
+                                        to="/contactUs"
+                                    >
+                                        Contact Us
+                                    </Link>
+                                    <Link
+                                        className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-blue-700  mr-4"
+                                        to="/logIn"
                                         onClick={() => {
                                             setToken(null);
                                             localStorage.removeItem("token");
@@ -80,11 +105,12 @@ function App() {
                                     >
                                         Logout
                                     </Link>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div className="absolute top-8 right-8 ">
+                                </div>
+                            </div>
+                        )}
+                    </nav>
+
+                    <div className="absolute top-5 right-5 ">
                         <button
                             onClick={() => {
                                 if (theme === "dark") {
@@ -116,8 +142,8 @@ function App() {
                         <Route path="/contactUs">
                             <ContactUs />
                         </Route>
-                        <Route path="/login">
-                            <Login />
+                        <Route path="/logIn">
+                            <LogIn />
                         </Route>
                         <Route path="/signUp">
                             <SignUp />

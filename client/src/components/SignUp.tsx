@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import TokenContext from "../contexts/TokenContext";
 import { Button } from "./Button";
 import { Input } from "./Input";
+import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 export const SignUp = () => {
     const { token, setToken } = useContext(TokenContext)!;
@@ -155,11 +156,12 @@ export const SignUp = () => {
                         ) : null}
                     </label>
 
-                    <Button
-                        className="block my-4 m-auto"
-                        type="submit"
-                        children="Sign Up"
-                    />
+                    <div className="flex justify-evenly mt-4">
+                        <Button type="submit" children="Sign Up" />
+                        <Button>
+                            <Link to="/logIn">Log In</Link>
+                        </Button>
+                    </div>
                 </form>
             </div>
         </>
